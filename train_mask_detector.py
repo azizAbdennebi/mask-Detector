@@ -16,6 +16,7 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from imutils import paths
+import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -26,7 +27,7 @@ INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
 
-DIRECTORY = r"C:\Mask Detection\CODE\Face-Mask-Detection-master\dataset"
+DIRECTORY = r"./dataset"
 CATEGORIES = ["with_mask", "without_mask"]
 
 # grab the list of images in our dataset directory, then initialize
@@ -96,6 +97,7 @@ print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
+
 
 # train the head of the network
 print("[INFO] training head...")
