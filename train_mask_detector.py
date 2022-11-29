@@ -98,15 +98,30 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
+#GPU use
+tf.debugging.set_log_device_placement(True)
+gpus = tf.config.list_logical_devices('GPU')
 
-# train the head of the network
-print("[INFO] training head...")
-H = model.fit(
-	aug.flow(trainX, trainY, batch_size=BS),
-	steps_per_epoch=len(trainX) // BS,
-	validation_data=(testX, testY),
-	validation_steps=len(testX) // BS,
-	epochs=EPOCHS)
+if gpus:
+	for gpu in gpus:
+		
+		print("using:",gpu.name)
+		with tf.device(gpu.name):
+			H = model.fit(
+			aug.flow(trainX, trainY, batch_size=BS),
+			steps_per_epoch=len(trainX) // BS,
+			validation_data=(testX, testY),
+			validation_steps=len(testX) // BS,
+			epochs=EPOCHS)
+else:
+	# train the head of the network
+	print("[INFO] training head...")
+	H = model.fit(
+		aug.flow(trainX, trainY, batch_size=BS),
+		steps_per_epoch=len(trainX) // BS,
+		validation_data=(testX, testY),
+		validation_steps=len(testX) // BS,
+		epochs=EPOCHS)
 
 # make predictions on the testing set
 print("[INFO] evaluating network...")
